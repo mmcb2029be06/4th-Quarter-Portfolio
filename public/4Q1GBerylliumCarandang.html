@@ -9,13 +9,13 @@
     
       <form method="post">
         <label for="title">Title:</label><br>
-        <input type="text" id="title" name="title"><br><br>
+        <input type="text" id="title" name="title" required><br><br>
 
         <label for="year">Year:</label><br>
-        <input type="text" id="year" name="year"><br><br>
+        <input type="text" id="year" name="year" required><br><br>
 
         <label for="genre">Genre:</label> <br>
-        <select id="genre" name="genre">
+        <select id="genre" name="genre" required>
         <option value="Drama">Drama</option>
         <option value="Comedy">Comedy</option>
         <option value="Action">Action</option>
@@ -28,14 +28,110 @@
         <option value="Superhero">Superhero</option>
         </select><br><br>
 
-        <button type="submit">Add Movie</button>
+        <label>Rating:</label>
+        <div class="stars" id="ratingStars" required>
+          <span class="star" data-value="★">&#9733;</span>
+          <span class="star" data-value="★★">&#9733;</span>
+          <span class="star" data-value="★★★">&#9733;</span>
+          <span class="star" data-value="★★★★">&#9733;</span>
+          <span class="star" data-value="★★★★★">&#9733;</span>
+        </div> <br>
+
+        <button type="submit" id="submit">Add Movie</button>
 
       </form>
 
       <h1 class="title">Movie List</h1>
+
+      <table id="list">
+        
+      </table>
       
   </body>
     <script>
+      const KEY = 'movies'; // we will be storing everything on key: notes
+      let selectedRating = 0;
+      render();
+    
+      //loads the saved data when needed from the set key
+      function loadNotes() {
+        const raw = localStorage.getItem(KEY);
 
+        if (raw){
+          return JSON.parse(raw);
+        }
+        else{
+          return [];
+        }
+      }
+
+      //saves any string pair into the set key
+      function saveNotes(entries) {
+        localStorage.setItem(KEY, JSON.stringify(entries));
+      }
+
+
+      //renders the list of movies
+      function render() {
+        const notes = loadNotes();
+        const list = document.getElementById('list');    
+
+        let output = ``;
+        
+        
+        //adds a new entry
+        for (let i = 0; i < notes.length; i++) { 
+          output += `<tr>
+            <td>${notes[i].title} (${notes[i].year}) - ${notes[i].genre}, Rating: ${notes[i].rating}</td>
+          </tr>`;
+          }
+
+        list.innerHTML = output;
+        }
+        
+
+        //function when submitting
+        const submitButton = document.getElementById('submit');
+        submitButton.addEventListener("click", function(e) {
+          e.preventDefault(); // to avoid immediately resetting the data
+          const title = document.getElementById('title').value.trim();
+          const year = document.getElementById('year').value.trim();
+          const genre = document.getElementById('genre').value.trim();
+          const rating = selectedRating.trim();
+
+          const obj = { // this is where it is all saved as an object
+            title: title,
+            year: year,
+            genre: genre,
+            rating: rating
+          };
+
+          const notes = loadNotes(); // this is where the object gets pushed into an array
+          notes.push(obj);           // grow the array over time
+          saveNotes(notes);          // store updated array in localStorage
+          
+          render();
+
+      });
+
+       // Handle star clicks
+      document.querySelectorAll(".star").forEach(star => {
+        star.addEventListener("click", function() {
+          selectedRating = this.getAttribute("data-value");
+          updateStars(selectedRating);
+        });
+      });
+
+      function updateStars(rating) {
+        document.querySelectorAll(".star").forEach(star => {
+          star.classList.remove("selected");
+          if (star.getAttribute("data-value") <= rating) {
+            star.classList.add("selected");
+          }
+        });
+      }
+    
+    
+    
     </script>
 </html>

@@ -1,0 +1,29 @@
+.stars {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+  }
+
+  .star {
+    font-size: 28px;
+    color: lightgray;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .star:hover,
+  .star.selected {
+    color: gold;
+  }
+
+h1{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+}
+
+body{
+    backdrop-filter: lightblue;
+    background-image: url('https://cosmicbook.news/wp-content/uploads/2016/07/marvel-studios-logo-intro.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
