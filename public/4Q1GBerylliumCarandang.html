@@ -30,7 +30,7 @@
         </select><br><br>
 
         <label>Rating:</label>
-        <div class="stars" id="ratingStars" required>
+        <div class="stars" id="ratingStars">
           <span class="star" data-value="★">&#9733;</span>
           <span class="star" data-value="★★">&#9733;</span>
           <span class="star" data-value="★★★">&#9733;</span>
@@ -85,7 +85,8 @@
         //adds a new entry
         for (let i = 0; i < notes.length; i++) { 
           output += `<tr>
-            <td>${notes[i].title} (${notes[i].year}) - ${notes[i].genre}, Rating: ${notes[i].rating}</td>
+            <td>${notes[i].title} (${notes[i].year}) - ${notes[i].genre}, Rating: ${notes[i].rating} <button data-i="${i}" id="button" >Delete</button> </td>
+                
           </tr>`;
           }
 
@@ -109,13 +110,57 @@
             rating: rating
           };
 
-          const notes = loadNotes(); // this is where the object gets pushed into an array
-          notes.push(obj);           // grow the array over time
-          saveNotes(notes);          // store updated array in localStorage
-          
-          render();
+          const notes = loadNotes();
+          let existingMovie = 0;
 
-      });
+          for (i in notes){
+
+          if (notes[i].title == title){
+
+          existingMovie += 1; // if it sees an already existing movie, it adds one to this variable
+
+          } }
+
+          if (existingMovie != 0){ // to see if there was an existing movie
+            // object is inserted in a specific slot
+            notes.splice(i,1,obj);           
+            saveNotes(notes);          // store updated array in localStorage
+            render();
+          }
+          else{
+            notes.push(obj); // object is pushed in an array
+            saveNotes(notes);
+            render(); // store updated array in localStorage
+          }
+
+        });
+
+        //detects if something was clicked within the list
+        document.getElementById('list').onclick = function(event)
+    {
+      // Step 1: Check if the thing clicked is a button
+      if (event.target.tagName.toLowerCase() === 'button'){
+
+        // Step 2: Get the index number from the button
+          let index = event.target.dataset.i;
+          index = Number(index);
+
+          // Step 3: Load the notes from localStorage
+          const notes = loadNotes();
+
+          // Step 4: Remove one note at that index
+          notes.splice(index, 1);        // remove one item
+
+          // Step 5: Save the updated notes back to localStorage
+          saveNotes(notes);
+
+          // Step 6: Show the new list on the page
+          render();
+      }
+      else{
+        return;
+      }
+    };
 
        // Handle star clicks
       document.querySelectorAll(".star").forEach(star => {
